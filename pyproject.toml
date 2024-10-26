@@ -1,7 +1,7 @@
 [project]
-name = "renameme"
+name = "knowledge-graph"
 version = "0.1"
-description = "renameme service"
+description = "Knowledge Graph Service"
 requires-python = ">=3.12"
 
 [tool.ruff]
@@ -69,7 +69,7 @@ task-tags = ["TODO", "FIXME"]
 
 # isort settings
 [tool.ruff.lint.isort]
-known-first-party = ["renameme_service"]
+known-first-party = ["knowledge-graph_service"]
 
 # pydocstyle settings
 [tool.ruff.lint.pydocstyle]
