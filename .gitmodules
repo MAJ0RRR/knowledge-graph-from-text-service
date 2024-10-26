@@ -1,0 +1,3 @@
+[submodule "knowledge-graph"]
+	path = knowledge-graph
+	url = https://github.com/MAJ0RRR/knowledge-graph
