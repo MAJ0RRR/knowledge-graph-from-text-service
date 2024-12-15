@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 
-from .routers import example
+from .routers import graph
 
 app = FastAPI(
     title='knowledge-graph',
-    description='Fill the description',
+    description='A service that generates a graph of concepts from a given text.',
     version='0.1',
 )
 
-app.include_router(example.router)
+app.include_router(graph.router)
