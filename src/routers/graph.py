@@ -1,8 +1,8 @@
+import shutil
 from pathlib import Path
 
-from fastapi import APIRouter, File, UploadFile, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse
-import shutil
 
 router = APIRouter(
     prefix='',
@@ -12,7 +12,8 @@ router = APIRouter(
 UPLOAD_DIR = Path('/app/model_connection_example/input_data')
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-@router.get("/", response_class=HTMLResponse)
+
+@router.get('/', response_class=HTMLResponse)
 async def get_upload_form():
     """Serve the HTML form for file upload."""
     html_content = """
@@ -75,6 +76,7 @@ async def get_upload_form():
     """
     return HTMLResponse(content=html_content, status_code=200)
 
+
 @router.get(
     '/graph',
     summary='Show graph',
@@ -88,8 +90,9 @@ async def show_graph():
         graph_html = graph_html_path.read_text(encoding='utf-8')
         download_csv_button = """
         <div style="text-align: center; margin-top: 20px;">
-            <button onclick="window.location.href='/download'" 
-                    style="padding: 10px 20px; font-size: 16px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            <button onclick="window.location.href='/download'"
+                    style="padding: 10px 20px; font-size: 16px; background-color: #4CAF50; color: white; \
+                      border: none; border-radius: 5px; cursor: pointer;">
                 Download CSV
             </button>
         </div>
@@ -114,26 +117,27 @@ async def download_csv():
 
     return HTMLResponse(content='<h1>CSV File Not Found</h1>', status_code=404)
 
+
 @router.post(
     '/upload',
     summary='Upload PDF file',
     description='Uploads a PDF file and saves it to the server.',
 )
-async def upload_pdf(file: UploadFile = File(...)):
+async def upload_pdf(file: UploadFile):
     """This endpoint allows the user to upload a PDF file."""
     # Check if the uploaded file is a PDF
     if not file.filename.endswith('.pdf'):
-        raise HTTPException(status_code=400, detail="Only PDF files are allowed")
+        raise HTTPException(status_code=400, detail='Only PDF files are allowed')
 
     # Define the path where the file will be saved
     file_location = UPLOAD_DIR / file.filename
-    
+
     # Save the uploaded file to the server
     try:
-        with file_location.open("wb") as buffer:
+        with file_location.open('wb') as buffer:
             shutil.copyfileobj(file.file, buffer)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to save the file: {str(e)}")
-    
+        raise HTTPException(status_code=500, detail=f'Failed to save the file: {str(e)}') from e
+
     # Return the file's location after upload
     return HTMLResponse(content=f'<h1>File {file.filename} uploaded successfully!</h1>', status_code=200)
