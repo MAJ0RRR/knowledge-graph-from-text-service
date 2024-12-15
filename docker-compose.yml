@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+    volumes:
+      - ./src:/app/src                                           # Mount the src folder
+      - ./model_connection_example:/app/model_connection_example # Mount the model_connection_example folder
+    ports:
+      - "8080:8080"                        
+    environment:
+      - PYTHONUNBUFFERED=1

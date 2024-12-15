@@ -8,4 +8,5 @@ ruff check src --no-cache --verbose --fix
 ruff format src
 
 # Build Docker Image
-docker build -t knowledge-graph:latest .
+docker-compose build
+docker-compose up
