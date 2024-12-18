@@ -1,7 +1,7 @@
 import uuid
 import pandas as pd
 import numpy as np
-from .prompts import extractConcepts
+#from .prompts import extractConcepts
 from .prompts import graphPrompt
 
 
@@ -19,18 +19,18 @@ def documents2Dataframe(documents) -> pd.DataFrame:
     return df
 
 
-def df2ConceptsList(dataframe: pd.DataFrame) -> list:
-    results = dataframe.apply(
-        lambda row: extractConcepts(
-            row.text, {"chunk_id": row.chunk_id, "type": "concept"}
-        ),
-        axis=1,
-    )
-    results = results.dropna()
-    results = results.reset_index(drop=True)
+# def df2ConceptsList(dataframe: pd.DataFrame) -> list:
+#     results = dataframe.apply(
+#         lambda row: extractConcepts(
+#             row.text, {"chunk_id": row.chunk_id, "type": "concept"}
+#         ),
+#         axis=1,
+#     )
+#     results = results.dropna()
+#     results = results.reset_index(drop=True)
 
-    concept_list = np.concatenate(results).ravel().tolist()
-    return concept_list
+#     concept_list = np.concatenate(results).ravel().tolist()
+#     return concept_list
 
 
 def concepts2Df(concepts_list) -> pd.DataFrame:
