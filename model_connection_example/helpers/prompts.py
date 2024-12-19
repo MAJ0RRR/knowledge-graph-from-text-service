@@ -80,26 +80,25 @@ def graphPrompt2(input: str, metadata={}, model="mistral-openorca:latest"):
 
 def graphPrompt(input: str, metadata={},):
     SYS_PROMPT = (
-        "Jesteś twórcą grafów sieciowych, który wyodrębnia terminy i ich relacje z podanego kontekstu. "
+"Jesteś twórcą grafów sieciowych, który wyodrębnia terminy i ich relacje z podanego kontekstu. "
         "Otrzymujesz fragment kontekstu (oznaczony jako ```), Twoim zadaniem jest wyodrębnienie ontologii "
-        "terminów wspomnianych w danym kontekście. Terminy te powinny reprezentować kluczowe pojęcia zgodnie z kontekstem. \n"
-        "Myśl 1: Analizując każde zdanie, zastanów się nad kluczowymi terminami w nim wspomnianymi.\n"
-            "\tTerminy mogą obejmować obiekt, byt, lokalizację, organizację, osobę, \n"
-            "\tstan, akronim, dokumenty, usługę, pojęcie itd.\n"
-            "\tTerminy powinny być jak najbardziej atomistyczne.\n\n"
-        "Myśl 2: Zastanów się, jak te terminy mogą mieć relacje jeden na jeden z innymi terminami.\n"
-            "\tTerminy wspomniane w tym samym zdaniu lub w tym samym akapicie są zwykle ze sobą powiązane.\n"
-            "\tTerminy mogą być powiązane z wieloma innymi terminami.\n\n"
-        "Myśl 3: Znajdź relację między każdą taką powiązaną parą terminów. \n\n"
-        "Sformatuj wynik jako listę JSON. Każdy element listy zawiera parę terminów "
-        "oraz relację między nimi w formie: \n"
+        "terminów wspomnianych w danym kontekście. Terminy te powinny reprezentować kluczowe pojęcia zgodnie z kontekstem.\n\n"
+        "1. Analizując każde zdanie, zastanów się nad kluczowymi terminami w nim wspomnianymi.\n"
+        "\t- Terminy mogą obejmować obiekt, byt, lokalizację, organizację, osobę, stan, akronim, dokumenty, usługę, pojęcie itd.\n"
+        "\t- Terminy powinny być jak najbardziej atomistyczne.\n\n"
+        "2. Zastanów się, jak te terminy mogą mieć relacje jeden na jeden z innymi terminami.\n"
+        "\t- Terminy wspomniane w tym samym zdaniu lub w tym samym akapicie są zwykle ze sobą powiązane.\n"
+        "\t- Terminy mogą być powiązane z wieloma innymi terminami.\n\n"
+        "3. Znajdź relację między każdą taką powiązaną parą terminów.\n\n"
+        "Sformatuj wynik jako listę JSON. Każdy element listy zawiera parę terminów oraz relację między nimi w formie:\n"
         "[\n"
         "   {\n"
         '       "node_1": "Termin z wyodrębnionej ontologii",\n'
         '       "node_2": "Powiązany termin z wyodrębnionej ontologii",\n'
         '       "edge": "Relacja między dwoma terminami, node_1 i node_2, w jednym lub dwóch zdaniach"\n'
-        "   }, {...}\n"
-        "]"
+        "   }\n"
+        "]\n"
+        "Upewnij się, że wynik jest poprawnym JSON-em. Jeśli wynik nie jest poprawnym JSON-em, zwróć komunikat o błędzie wskazujący problem."
     )
 
     USER_PROMPT = f"Kontekst: ```{input}``` \n\n Wynik: "

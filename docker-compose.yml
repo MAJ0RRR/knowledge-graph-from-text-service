@@ -7,6 +7,8 @@ services:
     volumes:
       - ./src:/app/src                                           # Mount the src folder
       - ./model_connection_example:/app/model_connection_example # Mount the model_connection_example folder
+      - ./model_connection_example/input_data:/app/input_data    # Mount the input_data folder
+      - ./model_connection_example/output_data:/app/output_data    # Mount the output_data folder
     ports:
       - "8080:8080"                        
     environment:

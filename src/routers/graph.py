@@ -95,6 +95,11 @@ async def show_graph():
                       border: none; border-radius: 5px; cursor: pointer;">
                 Download CSV
             </button>
+                        <button onclick="window.location.href='/generate-graph'"
+                    style="padding: 10px 20px; font-size: 16px; background-color: #4CAF50; color: white; \
+                      border: none; border-radius: 5px; cursor: pointer; margin-top: 20px;">
+                Generate Graph
+            </button>
         </div>
         <br>
         """
@@ -141,3 +146,23 @@ async def upload_pdf(file: UploadFile):
 
     # Return the file's location after upload
     return HTMLResponse(content=f'<h1>File {file.filename} uploaded successfully!</h1>', status_code=200)
+
+
+@router.get(
+    '/generate-graph',
+    summary='Generate Graph',
+    description='Invokes the generate_graph.py script.',
+)
+async def generate_graph():
+    """This endpoint invokes the generate_graph.py script."""
+    import subprocess
+
+    try:
+        result = subprocess.run(
+            ['python', '/app/model_connection_example/generate_graph.py'], check=True, capture_output=True, text=True
+        )
+        return HTMLResponse(
+            content=f'<h1>Graph generated successfully!</h1><pre>{result.stdout}</pre>', status_code=200
+        )
+    except subprocess.CalledProcessError as e:
+        return HTMLResponse(content=f'<h1>Failed to generate graph</h1><pre>{e.stderr}</pre>', status_code=500)

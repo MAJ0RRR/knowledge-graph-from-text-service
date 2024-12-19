@@ -22,14 +22,23 @@ RUN set -x && \
 
 USER python
 
-# Install python dependencies
+# Install python dependencies within the virtual environment
 COPY requirements.txt .
-RUN  pip install --no-cache-dir --upgrade -r requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+
+# Download NLTK data to a directory with write permissions
+RUN python -m nltk.downloader -d /home/python/nltk_data punkt_tab
+RUN python -m nltk.downloader -d /home/python/nltk_data averaged_perceptron_tagger_eng
+
+# Copy the entire project
+COPY . .
 
 # don't buffer Python output
 ENV PYTHONUNBUFFERED=1
 # Add pip's user base to PATH
 ENV PATH="$PATH:/home/python/.local/bin"
+# Add NLTK data to NLTK_DATA environment variable
+ENV NLTK_DATA="/home/python/nltk_data"
 
 # expose port
 EXPOSE 8080
