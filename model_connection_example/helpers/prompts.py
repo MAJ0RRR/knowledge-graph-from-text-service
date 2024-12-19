@@ -126,7 +126,7 @@ def graphPrompt(input: str, metadata={},):
         print(full_response)
         response_text = full_response['response']
 
-        match = re.search(r'```json\n(.*?)\n```', response_text, re.DOTALL)
+        match = re.search(r'(\[.*?\s\])', response_text, re.DOTALL)
 
         if match:
             json_text = match.group(1)
