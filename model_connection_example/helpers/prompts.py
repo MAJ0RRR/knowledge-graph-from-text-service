@@ -1,5 +1,6 @@
 import re
 import sys
+import time
 
 import requests
 
@@ -78,28 +79,27 @@ def graphPrompt2(input: str, metadata={}, model="mistral-openorca:latest"):
         result = None
     return result
 
-def graphPrompt(input: str, metadata={},):
+def bielikGraphPrompt(input: str, metadata={},max_retries=3, retry_delay=5):
     SYS_PROMPT = (
         "Jesteś twórcą grafów sieciowych, który wyodrębnia terminy i ich relacje z podanego kontekstu. "
         "Otrzymujesz fragment kontekstu (oznaczony jako ```), Twoim zadaniem jest wyodrębnienie ontologii "
-        "terminów wspomnianych w danym kontekście. Terminy te powinny reprezentować kluczowe pojęcia zgodnie z kontekstem. \n"
-        "Myśl 1: Analizując każde zdanie, zastanów się nad kluczowymi terminami w nim wspomnianymi.\n"
-            "\tTerminy mogą obejmować obiekt, byt, lokalizację, organizację, osobę, \n"
-            "\tstan, akronim, dokumenty, usługę, pojęcie itd.\n"
-            "\tTerminy powinny być jak najbardziej atomistyczne.\n\n"
-        "Myśl 2: Zastanów się, jak te terminy mogą mieć relacje jeden na jeden z innymi terminami.\n"
-            "\tTerminy wspomniane w tym samym zdaniu lub w tym samym akapicie są zwykle ze sobą powiązane.\n"
-            "\tTerminy mogą być powiązane z wieloma innymi terminami.\n\n"
-        "Myśl 3: Znajdź relację między każdą taką powiązaną parą terminów. \n\n"
-        "Sformatuj wynik jako listę JSON. Każdy element listy zawiera parę terminów "
-        "oraz relację między nimi w formie: \n"
+        "terminów wspomnianych w danym kontekście. Terminy te powinny reprezentować kluczowe pojęcia zgodnie z kontekstem.\n\n"
+        "1. Analizując każde zdanie, zastanów się nad kluczowymi terminami w nim wspomnianymi.\n"
+        "\t- Terminy mogą obejmować obiekt, byt, lokalizację, organizację, osobę, stan, akronim, dokumenty, usługę, pojęcie itd.\n"
+        "\t- Terminy powinny być jak najbardziej atomistyczne.\n\n"
+        "2. Zastanów się, jak te terminy mogą mieć relacje jeden na jeden z innymi terminami.\n"
+        "\t- Terminy wspomniane w tym samym zdaniu lub w tym samym akapicie są zwykle ze sobą powiązane.\n"
+        "\t- Terminy mogą być powiązane z wieloma innymi terminami.\n\n"
+        "3. Znajdź relację między każdą taką powiązaną parą terminów.\n\n"
+        "Sformatuj wynik jako listę JSON. Każdy element listy zawiera parę terminów oraz relację między nimi w formie:\n"
         "[\n"
         "   {\n"
         '       "node_1": "Termin z wyodrębnionej ontologii",\n'
         '       "node_2": "Powiązany termin z wyodrębnionej ontologii",\n'
         '       "edge": "Relacja między dwoma terminami, node_1 i node_2, w jednym lub dwóch zdaniach"\n'
-        "   }, {...}\n"
-        "]"
+        "   }\n"
+        "]\n"
+        "Upewnij się, że wynik jest poprawnym JSON-em. Jeśli wynik nie jest poprawnym JSON-em, zwróć komunikat o błędzie wskazujący problem."
     )
 
     USER_PROMPT = f"Kontekst: ```{input}``` \n\n Wynik: "
@@ -109,8 +109,8 @@ def graphPrompt(input: str, metadata={},):
             {"role": "system", "content": SYS_PROMPT},
             {"role": "user", "content": USER_PROMPT}
         ],
-    "max_length": 2000,
-    "temperature": 0.7
+        "max_length": 2000,
+        "temperature": 0.7
     }
 
     headers = {
@@ -118,34 +118,104 @@ def graphPrompt(input: str, metadata={},):
         "Content-Type": "application/json"
     }
 
-    try:
-        response = requests.put(BIELIK_URL, json=data, auth=auth, headers=headers, timeout=60, verify=False)
-        response.raise_for_status()
+    attempt = 0
+    result = None
 
-        full_response = response.json()
-        result = full_response.get('choices', [{}])[0].get('message', {}).get('content', '')
-        print(full_response)
-        response_text = full_response['response']
+    while attempt < max_retries and result is None:
+        try:
+            response = requests.put(BIELIK_URL, json=data, auth=auth, headers=headers, timeout=500, verify=False)
+            response.raise_for_status()
 
-        match = re.search(r'```json\n(.*?)\n```', response_text, re.DOTALL)
+            full_response = response.json()
+            response_text = full_response.get('response', '')
 
-        if match:
-            json_text = match.group(1)
-            try:
-                ontologia = json.loads(json_text)
-                print("Znaleziono ontologię:", ontologia)
-            except json.JSONDecodeError as e:
-                print(f"Nie udało się sparsować JSON-a: {e}")
-        else:
-            print("Nie znaleziono sekcji JSON w odpowiedzi.")
-        result = ontologia
-        result = [dict(item, **metadata) for item in result]
+            match = re.search(r'(\[.*?\s\])', response_text, re.DOTALL)
+            if match:
+                json_text = match.group(1)
+                try:
+                    ontologia = json.loads(json_text)
+                    print("Znaleziono ontologię:", ontologia)
+                    result = ontologia
+                except json.JSONDecodeError as e:
+                    print(f"Nie udało się sparsować JSON-a: {e}")
+                    result = None
+            else:
+                print("Nie znaleziono sekcji JSON w odpowiedzi.")
+                result = None
 
-    except requests.RequestException as e:
-        print("Błąd podczas połączenia z modelem Bielik:", e)
-        result = None
-    except json.JSONDecodeError:
-        print("Błąd dekodowania odpowiedzi na JSON:", result)
-        result = None
+            if result is not None:
+                result = [dict(item, **metadata) for item in result]
+
+        except requests.RequestException as e:
+            print(f"Błąd podczas połączenia z modelem Bielik: {e}")
+            result = None
+        except json.JSONDecodeError:
+            print("Błąd dekodowania odpowiedzi na JSON.")
+            result = None
+
+        if result is None:
+            attempt += 1
+            print(f"Próba {attempt}/{max_retries} nieudana. Próba ponownie za {retry_delay} sek.")
+            time.sleep(retry_delay)
+
+    return result
+
+
+
+def llamaGraphPrompt(input: str, metadata={}, max_retries=3, retry_delay=5,  model="custom-llama:latest"):
+
+    USER_PROMPT = f"Kontekst: ```{input}``` \n\n Wynik: "
+    data = {
+        "model": model,
+        "prompt": USER_PROMPT,
+        "stream": False
+    }
+
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    }
+    api_url = "http://172.20.83.209:11434/api/generate"
+    attempt = 0
+    result = None
+
+    while attempt < max_retries and result is None:
+        try:
+            # Wysyłanie zapytania do API
+            response = requests.post(api_url, json=data, headers=headers, timeout=500)
+
+            response.raise_for_status()
+
+            full_response = response.json()
+            response_text = full_response.get('response', '')
+
+            match = re.search(r'(\[.*?\s\])', response_text, re.DOTALL)
+            if match:
+                json_text = match.group(1)
+                try:
+                    ontologia = json.loads(json_text)
+                    print("Znaleziono ontologię:", ontologia)
+                    result = ontologia
+                except json.JSONDecodeError as e:
+                    print(f"Nie udało się sparsować JSON-a: {e}")
+                    result = None
+            else:
+                print("Nie znaleziono sekcji JSON w odpowiedzi.")
+                result = None
+
+            if result is not None:
+                result = [dict(item, **metadata) for item in result]
+
+        except requests.RequestException as e:
+            print(f"Błąd podczas połączenia z modelem Bielik: {e}")
+            result = None
+        except json.JSONDecodeError:
+            print("Błąd dekodowania odpowiedzi na JSON.")
+            result = None
+
+        if result is None:
+            attempt += 1
+            print(f"Próba {attempt}/{max_retries} nieudana. Próba ponownie za {retry_delay} sek.")
+            time.sleep(retry_delay)
 
     return result
