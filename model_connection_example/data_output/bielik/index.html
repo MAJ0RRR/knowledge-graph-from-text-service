@@ -1,0 +1,466 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script>function neighbourhoodHighlight(params) {
+  // console.log("in nieghbourhoodhighlight");
+  allNodes = nodes.get({ returnType: "Object" });
+  // originalNodes = JSON.parse(JSON.stringify(allNodes));
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    highlightActive = true;
+    var i, j;
+    var selectedNode = params.nodes[0];
+    var degrees = 2;
+
+    // mark all nodes as hard to read.
+    for (let nodeId in allNodes) {
+      // nodeColors[nodeId] = allNodes[nodeId].color;
+      allNodes[nodeId].color = "rgba(200,200,200,0.5)";
+      if (allNodes[nodeId].hiddenLabel === undefined) {
+        allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+    var connectedNodes = network.getConnectedNodes(selectedNode);
+    var allConnectedNodes = [];
+
+    // get the second degree nodes
+    for (i = 1; i < degrees; i++) {
+      for (j = 0; j < connectedNodes.length; j++) {
+        allConnectedNodes = allConnectedNodes.concat(
+          network.getConnectedNodes(connectedNodes[j])
+        );
+      }
+    }
+
+    // all second degree nodes get a different color and their label back
+    for (i = 0; i < allConnectedNodes.length; i++) {
+      // allNodes[allConnectedNodes[i]].color = "pink";
+      allNodes[allConnectedNodes[i]].color = "rgba(150,150,150,0.75)";
+      if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[allConnectedNodes[i]].label =
+          allNodes[allConnectedNodes[i]].hiddenLabel;
+        allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // all first degree nodes get their own color and their label back
+    for (i = 0; i < connectedNodes.length; i++) {
+      // allNodes[connectedNodes[i]].color = undefined;
+      allNodes[connectedNodes[i]].color = nodeColors[connectedNodes[i]];
+      if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[connectedNodes[i]].label =
+          allNodes[connectedNodes[i]].hiddenLabel;
+        allNodes[connectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // the main node gets its own color and its label back.
+    // allNodes[selectedNode].color = undefined;
+    allNodes[selectedNode].color = nodeColors[selectedNode];
+    if (allNodes[selectedNode].hiddenLabel !== undefined) {
+      allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+      allNodes[selectedNode].hiddenLabel = undefined;
+    }
+  } else if (highlightActive === true) {
+    // console.log("highlightActive was true");
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      // allNodes[nodeId].color = "purple";
+      allNodes[nodeId].color = nodeColors[nodeId];
+      // delete allNodes[nodeId].color;
+      if (allNodes[nodeId].hiddenLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+        allNodes[nodeId].hiddenLabel = undefined;
+      }
+    }
+    highlightActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    // console.log("Nothing was selected");
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        // allNodes[nodeId].color = {};
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function filterHighlight(params) {
+  allNodes = nodes.get({ returnType: "Object" });
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    filterActive = true;
+    let selectedNodes = params.nodes;
+
+    // hiding all nodes and saving the label
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = true;
+      if (allNodes[nodeId].savedLabel === undefined) {
+        allNodes[nodeId].savedLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+
+    for (let i=0; i < selectedNodes.length; i++) {
+      allNodes[selectedNodes[i]].hidden = false;
+      if (allNodes[selectedNodes[i]].savedLabel !== undefined) {
+        allNodes[selectedNodes[i]].label = allNodes[selectedNodes[i]].savedLabel;
+        allNodes[selectedNodes[i]].savedLabel = undefined;
+      }
+    }
+
+  } else if (filterActive === true) {
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = false;
+      if (allNodes[nodeId].savedLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].savedLabel;
+        allNodes[nodeId].savedLabel = undefined;
+      }
+    }
+    filterActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function selectNode(nodes) {
+  network.selectNodes(nodes);
+  neighbourhoodHighlight({ nodes: nodes });
+  return nodes;
+}
+
+function selectNodes(nodes) {
+  network.selectNodes(nodes);
+  filterHighlight({nodes: nodes});
+  return nodes;
+}
+
+function highlightFilter(filter) {
+  let selectedNodes = []
+  let selectedProp = filter['property']
+  if (filter['item'] === 'node') {
+    let allNodes = nodes.get({ returnType: "Object" });
+    for (let nodeId in allNodes) {
+      if (allNodes[nodeId][selectedProp] && filter['value'].includes((allNodes[nodeId][selectedProp]).toString())) {
+        selectedNodes.push(nodeId)
+      }
+    }
+  }
+  else if (filter['item'] === 'edge'){
+    let allEdges = edges.get({returnType: 'object'});
+    // check if the selected property exists for selected edge and select the nodes connected to the edge
+    for (let edge in allEdges) {
+      if (allEdges[edge][selectedProp] && filter['value'].includes((allEdges[edge][selectedProp]).toString())) {
+        selectedNodes.push(allEdges[edge]['from'])
+        selectedNodes.push(allEdges[edge]['to'])
+      }
+    }
+  }
+  selectNodes(selectedNodes)
+}</script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+            
+            
+            
+            
+            
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/css/tom-select.min.css" integrity="sha512-43fHB3GLgZfz8QXl1RPQ8O66oIgv3po9cJ5erMt1c4QISq9dYb195T3vr5ImnJPXuVroKcGBPXBFKETW8jrPNQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/js/tom-select.complete.js" integrity="sha512-jeF9CfnvzDiw9G9xiksVjxR2lib44Gnovvkv+3CgCG6NXCD4gqlA5nDAVW5WjpA+i+/zKsUWV5xNEbW1X/HH0Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 900px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+                <div id="select-menu" class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-10 pb-2">
+                            <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="selectNode([value]);"
+                            id="select-node"
+                            placeholder="Select node..."
+                            >
+                                <option selected>Select a Node by ID</option>
+                                
+                                    <option value="klient">klient</option>
+                                
+                                    <option value="us³ugi">us³ugi</option>
+                                
+                                    <option value="cyfrowa rzeczywistoœæ">cyfrowa rzeczywistoœæ</option>
+                                
+                                    <option value="nowoczesny styl ¿ycia">nowoczesny styl ¿ycia</option>
+                                
+                                    <option value="bezpieczeñstwo">bezpieczeñstwo</option>
+                                
+                                    <option value="przedsiêbiorcy">przedsiêbiorcy</option>
+                                
+                                    <option value="wyzwania">wyzwania</option>
+                                
+                                    <option value="rynek">rynek</option>
+                                
+                                    <option value="regulacje">regulacje</option>
+                                
+                                    <option value="mojeid">mojeid</option>
+                                
+                                    <option value="ochrona danych">ochrona danych</option>
+                                
+                                    <option value="naruszenia ochrony danych">naruszenia ochrony danych</option>
+                                
+                                    <option value="cyfryzacja">cyfryzacja</option>
+                                
+                                    <option value="wymagania ochrony informacji">wymagania ochrony informacji</option>
+                                
+                                    <option value="ochrona informacji">ochrona informacji</option>
+                                
+                                    <option value="narzêdzia autoryzacji">narzêdzia autoryzacji</option>
+                                
+                                    <option value="potwierdzanie autentycznoœci">potwierdzanie autentycznoœci</option>
+                                
+                                    <option value="zaufane narzêdzia">zaufane narzêdzia</option>
+                                
+                                    <option value="zapotrzebowanie">zapotrzebowanie</option>
+                                
+                                    <option value="wymagania">wymagania</option>
+                                
+                                    <option value="dokumenty">dokumenty</option>
+                                
+                                    <option value="zdalne potwierdzanie to¿samoœci">zdalne potwierdzanie to¿samoœci</option>
+                                
+                                    <option value="us³uga online">us³uga online</option>
+                                
+                                    <option value="bankowoœæ elektroniczna">bankowoœæ elektroniczna</option>
+                                
+                                    <option value="u¿ytkownik (osoba)">u¿ytkownik (osoba)</option>
+                                
+                                    <option value="dostêp (u¿ytkownicy)">dostêp (u¿ytkownicy)</option>
+                                
+                                    <option value="polska">polska</option>
+                                
+                                    <option value="polska (cyfrowo)">polska (cyfrowo)</option>
+                                
+                                    <option value="us³ugi komercyjne">us³ugi komercyjne</option>
+                                
+                                    <option value="us³ugi publiczne">us³ugi publiczne</option>
+                                
+                            </select>
+                        </div>
+                        <div class="col-2 pb-2">
+                            <button type="button" class="btn btn-primary btn-block" onclick="neighbourhoodHighlight({nodes: []});">Reset Selection</button>
+                        </div>
+                    </div>
+                </div>
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+                  new TomSelect("#select-node",{
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      }
+                  });
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"group": 2, "id": "klient", "label": "klient", "shape": "dot", "size": 1}, {"group": 2, "id": "us\u0142ugi", "label": "us\u0142ugi", "shape": "dot", "size": 2}, {"group": 3, "id": "cyfrowa rzeczywisto\u015b\u0107", "label": "cyfrowa rzeczywisto\u015b\u0107", "shape": "dot", "size": 1}, {"group": 3, "id": "nowoczesny styl \u017cycia", "label": "nowoczesny styl \u017cycia", "shape": "dot", "size": 1}, {"group": 2, "id": "bezpiecze\u0144stwo", "label": "bezpiecze\u0144stwo", "shape": "dot", "size": 1}, {"group": 6, "id": "przedsi\u0119biorcy", "label": "przedsi\u0119biorcy", "shape": "dot", "size": 1}, {"group": 6, "id": "wyzwania", "label": "wyzwania", "shape": "dot", "size": 1}, {"group": 7, "id": "rynek", "label": "rynek", "shape": "dot", "size": 2}, {"group": 7, "id": "regulacje", "label": "regulacje", "shape": "dot", "size": 1}, {"group": 1, "id": "mojeid", "label": "mojeid", "shape": "dot", "size": 7}, {"group": 5, "id": "ochrona danych", "label": "ochrona danych", "shape": "dot", "size": 1}, {"group": 5, "id": "naruszenia ochrony danych", "label": "naruszenia ochrony danych", "shape": "dot", "size": 1}, {"group": 4, "id": "cyfryzacja", "label": "cyfryzacja", "shape": "dot", "size": 4}, {"group": 4, "id": "wymagania ochrony informacji", "label": "wymagania ochrony informacji", "shape": "dot", "size": 1}, {"group": 4, "id": "ochrona informacji", "label": "ochrona informacji", "shape": "dot", "size": 2}, {"group": 4, "id": "narz\u0119dzia autoryzacji", "label": "narz\u0119dzia autoryzacji", "shape": "dot", "size": 2}, {"group": 4, "id": "potwierdzanie autentyczno\u015bci", "label": "potwierdzanie autentyczno\u015bci", "shape": "dot", "size": 3}, {"group": 9, "id": "zaufane narz\u0119dzia", "label": "zaufane narz\u0119dzia", "shape": "dot", "size": 1}, {"group": 9, "id": "zapotrzebowanie", "label": "zapotrzebowanie", "shape": "dot", "size": 1}, {"group": 4, "id": "wymagania", "label": "wymagania", "shape": "dot", "size": 1}, {"group": 4, "id": "dokumenty", "label": "dokumenty", "shape": "dot", "size": 1}, {"group": 1, "id": "zdalne potwierdzanie to\u017csamo\u015bci", "label": "zdalne potwierdzanie to\u017csamo\u015bci", "shape": "dot", "size": 1}, {"group": 1, "id": "us\u0142uga online", "label": "us\u0142uga online", "shape": "dot", "size": 2}, {"group": 1, "id": "bankowo\u015b\u0107 elektroniczna", "label": "bankowo\u015b\u0107 elektroniczna", "shape": "dot", "size": 2}, {"group": 8, "id": "u\u017cytkownik (osoba)", "label": "u\u017cytkownik (osoba)", "shape": "dot", "size": 3}, {"group": 1, "id": "dost\u0119p (u\u017cytkownicy)", "label": "dost\u0119p (u\u017cytkownicy)", "shape": "dot", "size": 2}, {"group": 1, "id": "polska", "label": "polska", "shape": "dot", "size": 1}, {"group": 1, "id": "polska (cyfrowo)", "label": "polska (cyfrowo)", "shape": "dot", "size": 1}, {"group": 8, "id": "us\u0142ugi komercyjne", "label": "us\u0142ugi komercyjne", "shape": "dot", "size": 1}, {"group": 8, "id": "us\u0142ugi publiczne", "label": "us\u0142ugi publiczne", "shape": "dot", "size": 1}]);
+                  edges = new vis.DataSet([{"from": "klient", "title": "Oczekiwania wsp\u00f3\u0142czesnego klienta wobec us\u0142ug dopasowanych do cyfrowej rzeczywisto\u015bci i nowoczesnego stylu \u017cycia.", "to": "us\u0142ugi", "width": 1.0}, {"from": "cyfrowa rzeczywisto\u015b\u0107", "title": "Cyfrowa rzeczywisto\u015b\u0107 i nowoczesny styl \u017cycia wp\u0142ywaj\u0105 na oczekiwania klient\u00f3w wobec dost\u0119pno\u015bci i szybko\u015bci us\u0142ug.", "to": "nowoczesny styl \u017cycia", "width": 1.0}, {"from": "us\u0142ugi", "title": "Us\u0142ugi musz\u0105 by\u0107 dost\u0119pne \u0142atwo i szybko, ale te\u017c bezpieczne, aby sprosta\u0107 oczekiwaniom klient\u00f3w.", "to": "bezpiecze\u0144stwo", "width": 1.0}, {"from": "przedsi\u0119biorcy", "title": "Przedsi\u0119biorcy musz\u0105 stawi\u0107 czo\u0142a wyzwaniom zwi\u0105zanym z zapewnieniem bezpiecze\u0144stwa transakcji i dokument\u00f3w oraz wiarygodn\u0105 identyfikacj\u0105 klienta.", "to": "wyzwania", "width": 1.0}, {"from": "rynek", "title": "Przedsi\u0119biorcy musz\u0105 radzi\u0107 sobie z wymagaj\u0105cym kontekstem rynkowym i regulacyjnym.", "to": "regulacje", "width": 1.0}, {"from": "rynek", "title": "mojeID zosta\u0142o wprowadzone na rynek w czerwcu 2019 roku.", "to": "mojeid", "width": 1.0}, {"from": "ochrona danych", "title": "Globalny wzrost liczby narusze\u0144 ochrony danych prowadzi do zwi\u0119kszenia wymaga\u0144 w zakresie ochrony informacji.", "to": "naruszenia ochrony danych", "width": 1.0}, {"from": "cyfryzacja", "title": "Post\u0119puj\u0105ca cyfryzacja przek\u0142ada si\u0119 na wzrost wymaga\u0144 w zakresie ochrony informacji.", "to": "wymagania ochrony informacji", "width": 1.0}, {"from": "cyfryzacja", "title": "Post\u0119puj\u0105ca cyfryzacja przek\u0142ada si\u0119 na wzrost wymaga\u0144 w zakresie ochrony informacji.", "to": "ochrona informacji", "width": 1.0}, {"from": "cyfryzacja", "title": "Post\u0119puj\u0105ca cyfryzacja prowadzi do wzrostu zapotrzebowania na zaufane narz\u0119dzia autoryzacji.", "to": "narz\u0119dzia autoryzacji", "width": 1.0}, {"from": "cyfryzacja", "title": "Post\u0119puj\u0105ca cyfryzacja prowadzi do wzrostu zapotrzebowania na potwierdzanie autentyczno\u015bci dokument\u00f3w.", "to": "potwierdzanie autentyczno\u015bci", "width": 1.0}, {"from": "zaufane narz\u0119dzia", "title": "Wzrost wymaga\u0144 w zakresie ochrony informacji prowadzi do zwi\u0119kszonego zapotrzebowania na zaufane narz\u0119dzia.", "to": "zapotrzebowanie", "width": 1.0}, {"from": "ochrona informacji", "title": "Wzrost wymaga\u0144 w zakresie ochrony informacji.", "to": "wymagania", "width": 1.0}, {"from": "narz\u0119dzia autoryzacji", "title": "Narz\u0119dzia autoryzacji i potwierdzanie autentyczno\u015bci s\u0105 powi\u0105zane, gdy\u017c oba s\u0142u\u017c\u0105 zabezpieczeniu informacji w \u015brodowisku cyfrowym.", "to": "potwierdzanie autentyczno\u015bci", "width": 1.0}, {"from": "dokumenty", "title": "Dokumenty wymagaj\u0105 potwierdzania autentyczno\u015bci w celu zapewnienia ich integralno\u015bci i niezaprzeczalno\u015bci.", "to": "potwierdzanie autentyczno\u015bci", "width": 1.0}, {"from": "zdalne potwierdzanie to\u017csamo\u015bci", "title": "Jest metod\u0105 potwierdzania to\u017csamo\u015bci w us\u0142ugach online.", "to": "us\u0142uga online", "width": 1.0}, {"from": "us\u0142uga online", "title": "mojeID jest przyk\u0142adem us\u0142ugi online do zdalnego uwierzytelniania.", "to": "mojeid", "width": 1.0}, {"from": "mojeid", "title": "mojeID wykorzystuje mechanizm bankowo\u015bci elektronicznej do uwierzytelniania.", "to": "bankowo\u015b\u0107 elektroniczna", "width": 1.0}, {"from": "mojeid", "title": "mojeID s\u0142u\u017cy potwierdzaniu to\u017csamo\u015bci u\u017cytkownika online.", "to": "u\u017cytkownik (osoba)", "width": 1.0}, {"from": "mojeid", "title": "Dost\u0119p do mojeID ma ponad 98% u\u017cytkownik\u00f3w bankowo\u015bci elektronicznej w Polsce.", "to": "dost\u0119p (u\u017cytkownicy)", "width": 1.0}, {"from": "mojeid", "title": "mojeID jest dost\u0119pne w Polsce.", "to": "polska", "width": 1.0}, {"from": "mojeid", "title": "mojeID jest przyk\u0142adem rozwi\u0105zania cyfrowego w Polsce.", "to": "polska (cyfrowo)", "width": 1.0}, {"from": "u\u017cytkownik (osoba)", "title": "U\u017cytkownicy korzystaj\u0105 z mojeID w us\u0142ugach komercyjnych.", "to": "us\u0142ugi komercyjne", "width": 1.0}, {"from": "u\u017cytkownik (osoba)", "title": "U\u017cytkownicy korzystaj\u0105 z mojeID w us\u0142ugach publicznych.", "to": "us\u0142ugi publiczne", "width": 1.0}, {"from": "dost\u0119p (u\u017cytkownicy)", "title": "Dost\u0119p do mojeID jest zwi\u0105zany z korzystaniem z bankowo\u015bci elektronicznej.", "to": "bankowo\u015b\u0107 elektroniczna", "width": 1.0}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "physics"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.015,
+            "damping": 0.4,
+            "gravitationalConstant": -31,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+                    network.on("selectNode", neighbourhoodHighlight);
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

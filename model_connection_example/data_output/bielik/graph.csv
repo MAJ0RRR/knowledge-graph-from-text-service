@@ -1,0 +1,26 @@
+node_1|node_2|edge|chunk_id
+klient|usługi|Oczekiwania współczesnego klienta wobec usług dopasowanych do cyfrowej rzeczywistości i nowoczesnego stylu życia.|23c4e0987004458fbd6282ceec46f14b
+cyfrowa rzeczywistość|nowoczesny styl życia|Cyfrowa rzeczywistość i nowoczesny styl życia wpływają na oczekiwania klientów wobec dostępności i szybkości usług.|23c4e0987004458fbd6282ceec46f14b
+usługi|bezpieczeństwo|Usługi muszą być dostępne łatwo i szybko, ale też bezpieczne, aby sprostać oczekiwaniom klientów.|23c4e0987004458fbd6282ceec46f14b
+przedsiębiorcy|wyzwania|Przedsiębiorcy muszą stawić czoła wyzwaniom związanym z zapewnieniem bezpieczeństwa transakcji i dokumentów oraz wiarygodną identyfikacją klienta.|23c4e0987004458fbd6282ceec46f14b
+rynek|regulacje|Przedsiębiorcy muszą radzić sobie z wymagającym kontekstem rynkowym i regulacyjnym.|23c4e0987004458fbd6282ceec46f14b
+ochrona danych|naruszenia ochrony danych|Globalny wzrost liczby naruszeń ochrony danych prowadzi do zwiększenia wymagań w zakresie ochrony informacji.|23c4e0987004458fbd6282ceec46f14b
+cyfryzacja|wymagania ochrony informacji|Postępująca cyfryzacja przekłada się na wzrost wymagań w zakresie ochrony informacji.|23c4e0987004458fbd6282ceec46f14b
+zaufane narzędzia|zapotrzebowanie|Wzrost wymagań w zakresie ochrony informacji prowadzi do zwiększonego zapotrzebowania na zaufane narzędzia.|23c4e0987004458fbd6282ceec46f14b
+cyfryzacja|ochrona informacji|Postępująca cyfryzacja przekłada się na wzrost wymagań w zakresie ochrony informacji.|d857b55d91a54e68aae9fa2fbc38e171
+ochrona informacji|wymagania|Wzrost wymagań w zakresie ochrony informacji.|d857b55d91a54e68aae9fa2fbc38e171
+cyfryzacja|narzędzia autoryzacji|Postępująca cyfryzacja prowadzi do wzrostu zapotrzebowania na zaufane narzędzia autoryzacji.|d857b55d91a54e68aae9fa2fbc38e171
+cyfryzacja|potwierdzanie autentyczności|Postępująca cyfryzacja prowadzi do wzrostu zapotrzebowania na potwierdzanie autentyczności dokumentów.|d857b55d91a54e68aae9fa2fbc38e171
+narzędzia autoryzacji|potwierdzanie autentyczności|Narzędzia autoryzacji i potwierdzanie autentyczności są powiązane, gdyż oba służą zabezpieczeniu informacji w środowisku cyfrowym.|d857b55d91a54e68aae9fa2fbc38e171
+dokumenty|potwierdzanie autentyczności|Dokumenty wymagają potwierdzania autentyczności w celu zapewnienia ich integralności i niezaprzeczalności.|d857b55d91a54e68aae9fa2fbc38e171
+zdalne potwierdzanie tożsamości|usługa online|Jest metodą potwierdzania tożsamości w usługach online.|858599a687784d9299b961ae3404e607
+usługa online|mojeid|mojeID jest przykładem usługi online do zdalnego uwierzytelniania.|858599a687784d9299b961ae3404e607
+mojeid|bankowość elektroniczna|mojeID wykorzystuje mechanizm bankowości elektronicznej do uwierzytelniania.|858599a687784d9299b961ae3404e607
+mojeid|użytkownik (osoba)|mojeID służy potwierdzaniu tożsamości użytkownika online.|858599a687784d9299b961ae3404e607
+użytkownik (osoba)|usługi komercyjne|Użytkownicy korzystają z mojeID w usługach komercyjnych.|858599a687784d9299b961ae3404e607
+użytkownik (osoba)|usługi publiczne|Użytkownicy korzystają z mojeID w usługach publicznych.|858599a687784d9299b961ae3404e607
+mojeid|dostęp (użytkownicy)|Dostęp do mojeID ma ponad 98% użytkowników bankowości elektronicznej w Polsce.|858599a687784d9299b961ae3404e607
+dostęp (użytkownicy)|bankowość elektroniczna|Dostęp do mojeID jest związany z korzystaniem z bankowości elektronicznej.|858599a687784d9299b961ae3404e607
+mojeid|rynek|mojeID zostało wprowadzone na rynek w czerwcu 2019 roku.|858599a687784d9299b961ae3404e607
+mojeid|polska|mojeID jest dostępne w Polsce.|858599a687784d9299b961ae3404e607
+mojeid|polska (cyfrowo)|mojeID jest przykładem rozwiązania cyfrowego w Polsce.|858599a687784d9299b961ae3404e607

@@ -1,0 +1,21 @@
+node_1|node_2|edge|chunk_id
+cyfrowa rzeczywistość||Termin oznaczający pojęcie cyfrowej rzeczywistości|c760262005ca45bbb4b6629d0646cd3e
+bezpieczeństwo transakcji i dokumentów|transakcje|Powiązanie terminu 'bezpieczeństwo' z transakcjami|c760262005ca45bbb4b6629d0646cd3e
+identyfikacja klienta|klient|Termin oznaczający pojęć identyfikacji w kontekście usług online|c760262005ca45bbb4b6629d0646cd3e
+ochrona informacji|informacje|Powiązanie terminu 'ochrona' z informacjami|c760262005ca45bbb4b6629d0646cd3e
+zaufane narzędzia|narzędzie|Termin oznaczający pojęcie zaufanego narzędzia w kontekście ochrony informacji|c760262005ca45bbb4b6629d0646cd3e
+cyfryzacja|| Termin 'cyfryzacja' jest kluczowym pojęciem w kontekście ochrony informacji|d10cd4a0a1604e1698da517fc2641bc5
+ochrona informacji|cyfryzacja|Termin 'ochrona informacji' jest powiązany z 'cyfryzacją', jako zakres zainteresowania|d10cd4a0a1604e1698da517fc2641bc5
+zaufane narzędzia|autoryzacja|Termin 'zaufane narzędzia' jest powiązany z 'autoryzacją', jako cel ochrony informacji|d10cd4a0a1604e1698da517fc2641bc5
+autentyczności|potwierdzenie|Termin 'autentyczności' jest powiązany z 'potwierdzeniem', jako aspekt ochrony informacji|d10cd4a0a1604e1698da517fc2641bc5
+dokumentów||Termin 'dokumentów' jest kluczowym pojęciem w kontekście autoryzacji i potwierdzania autentyczności|d10cd4a0a1604e1698da517fc2641bc5
+zdalne potwierdzanie|tożsamość|Relacja synonymiczna|88231f4aebcf42d987e005b1c0f127cf
+zdalne potwierdzanie|uzakorniecie|Relacja hydroponimiczna|88231f4aebcf42d987e005b1c0f127cf
+usługa mojeid|tożsamość|Relacja hyponimizacyjna|88231f4aebcf42d987e005b1c0f127cf
+usługa mojeid|bankowość elektroniczna|Relacja skierowana do źródła|88231f4aebcf42d987e005b1c0f127cf
+mojeid|polska|Relacja geograficzna|88231f4aebcf42d987e005b1c0f127cf
+bankowość elektroniczna|usługi komercyjne|Relacja powiązania z okresem czasowym|88231f4aebcf42d987e005b1c0f127cf
+bankowość elektroniczna|instytucje publiczne|Relacja powiązania z okresem czasowym|88231f4aebcf42d987e005b1c0f127cf
+dostęp do mojeid|polska|Relacja geograficzna|88231f4aebcf42d987e005b1c0f127cf
+polacy|userzy bankowości elektronicznej|Relacja identyfikacyjna|88231f4aebcf42d987e005b1c0f127cf
+2019|rok wprowadzenia usługi mojeid|Relacja czasowa|88231f4aebcf42d987e005b1c0f127cf

@@ -1,0 +1,15 @@
+node_1|node_2|edge|chunk_id
+bezpieczeństwo transakcji|ochrona informacji|Powiązanie terminów, w tym obie oznaczają konieczność zastosowania ochrony danych|600f8233cdd24b02a70e61334f7b036b
+identyfikacja klienta|bezpieczeństwo transakcji|Relacje między terminami, w tym obie są powiązane z ochroną danych|600f8233cdd24b02a70e61334f7b036b
+cyfryzacja|wzrost wymagań|Powiązanie terminów, w tym pierwszy oznacza przekładanie się na nowoczesne usługi|600f8233cdd24b02a70e61334f7b036b
+wyzwania rynkowe i regulacyjne|bezpieczeństwo transakcji|Relacje między terminami, w tym obie są połączone z wymaganiami polskich przedsiębiorców|600f8233cdd24b02a70e61334f7b036b
+ochrona danych|naruszenie ochrony danych|Powiązanie terminów, w tym drugi jest konsekwencją braku ochrony|600f8233cdd24b02a70e61334f7b036b
+ochrona informacji|infinformacja|pojęcie powiążone|84a8b1218d174a06aefe63094c1e1482
+autoryzacja|zaufane narzędzia|słowo kluczowe|84a8b1218d174a06aefe63094c1e1482
+autentyczności dokumentów|potwierdzenie autentyczności|pojęcie powiążone|84a8b1218d174a06aefe63094c1e1482
+zdalne potwierdzanie tożsamości|usługa mojeid|Relacja eksploatacyjna między terminem 'zdalne potwierdzanie tożsamości' a usługą 'mojeID'.|b6061d3dda554a9994c0454bb35d831f
+usługa mojeid|bankowość elektroniczna|Relacja powiązania wstecznie odniesionej z 'usługą mojeID', która jest oparta na bankowości elektronicznej.|b6061d3dda554a9994c0454bb35d831f
+bankowość elektroniczna|polska|Relacja geograficzno-polityczna między 'bankowością elektroniczną' a krajem Polskę, w którym działa.|b6061d3dda554a9994c0454bb35d831f
+usługa mojeid|usługi komercyjne i publiczne|Relacja zastosowana między 'usługą mojeID' a obu rodzajach usług.|b6061d3dda554a9994c0454bb35d831f
+polska|22 miliony osób|Relacja liczeniowa, której korzystają użytkownicy bankowości elektronicznej w Polsce.|b6061d3dda554a9994c0454bb35d831f
+polacy|350 milionów razy|Relacja liczeniowa, ilu razy użyto 'usługi mojeID' od momentu jej wprowadzenia na rynek w 2019 roku.|b6061d3dda554a9994c0454bb35d831f
