@@ -5,11 +5,12 @@ services:
     build:
       context: .
     volumes:
-      - ./src:/app/src                                           # Mount the src folder
-      - ./model_connection_example:/app/model_connection_example # Mount the model_connection_example folder
-      - ./model_connection_example/input_data:/app/input_data    # Mount the input_data folder
-      - ./model_connection_example/output_data:/app/output_data    # Mount the output_data folder
+      - ./src:/app/src
+      - ./model_connection_example:/app/model_connection_example  # If your code needs it
+      - ./model_connection_example/input_data:/app/model_connection_example/input_data
+      - ./model_connection_example/data_output:/app/model_connection_example/data_output
+      - ./model_connection_example/docs:/app/model_connection_example/docs
     ports:
-      - "8080:8080"                        
+      - "8080:8080"
     environment:
       - PYTHONUNBUFFERED=1

@@ -17,8 +17,10 @@ ARG UID=1000
 ARG GID=1000
 RUN set -x && \
     groupadd -g "${GID}" python && \
-    useradd --create-home --no-log-init -u "${UID}" -g "${GID}" python &&\
-    chown python:python -R /app
+    useradd --create-home --no-log-init -u "${UID}" -g "${GID}" python && \
+    # Create needed directories, then chown to our python user
+    mkdir -p /app/input_data /app/data_output /app/docs && \
+    chown -R python:python /app
 
 USER python
 
