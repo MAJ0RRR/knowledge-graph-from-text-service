@@ -4,6 +4,17 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse
 
+back_to_upload_button = """
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="window.location.href='/'"
+            style="padding: 10px 20px; font-size: 16px; background-color: #4CAF50; color: white; \
+              border: none; border-radius: 5px; cursor: pointer;">
+            Back to Upload Page
+            </button>
+        </div>
+        <br>
+        """
+
 router = APIRouter(
     prefix='',
     responses={404: {'description': 'Not found'}},
@@ -70,6 +81,7 @@ async def get_upload_form():
                 <button type="submit">Upload PDF</button>
             </form>
             <div class="message"></div>
+            <button onclick="window.location.href='/graph'">View Graph</button>
         </div>
     </body>
     </html>
@@ -102,10 +114,11 @@ async def show_graph():
             </button>
         </div>
         <br>
-        """
+        """ + back_to_upload_button
         graph_html = download_csv_button + graph_html
         return HTMLResponse(content=graph_html, status_code=200)
-    return HTMLResponse(content='<h1>Graph HTML File Not Found</h1>', status_code=404)
+    content = back_to_upload_button + '<h1>Graph HTML File Not Found</h1>'
+    return HTMLResponse(content=content, status_code=404)
 
 
 @router.get(
@@ -145,7 +158,7 @@ async def upload_pdf(file: UploadFile):
         raise HTTPException(status_code=500, detail=f'Failed to save the file: {str(e)}') from e
 
     # Return the file's location after upload
-    return HTMLResponse(content=f'<h1>File {file.filename} uploaded successfully!</h1>', status_code=200)
+    return HTMLResponse(content=f'<h1>File {file.filename} uploaded successfully!</h1>' + back_to_upload_button, status_code=200)
 
 
 @router.get(
@@ -156,13 +169,8 @@ async def upload_pdf(file: UploadFile):
 async def generate_graph():
     """This endpoint invokes the generate_graph.py script."""
     import subprocess
-
     try:
-        result = subprocess.run(
-            ['python', '/app/model_connection_example/generate_graph.py'], check=True, capture_output=True, text=True
-        )
-        return HTMLResponse(
-            content=f'<h1>Graph generated successfully!</h1><pre>{result.stdout}</pre>', status_code=200
-        )
+        result = subprocess.run(['python', '/app/model_connection_example/scripts/generate_graph.py'], check=True, capture_output=True, text=True)
+        return HTMLResponse(content=f'<h1>Graph generated successfully!</h1><pre>{result.stdout}</pre>' + back_to_upload_button, status_code=200)
     except subprocess.CalledProcessError as e:
-        return HTMLResponse(content=f'<h1>Failed to generate graph</h1><pre>{e.stderr}</pre>', status_code=500)
+        return HTMLResponse(content=f'<h1>Failed to generate graph</h1><pre>{e.stderr}</pre>' + back_to_upload_button, status_code=500)
