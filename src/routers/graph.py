@@ -246,8 +246,8 @@ async def download_csv(session_id: str = Query(...)):
     Endpoint for downloading the session-specific CSV file located at:
     /app/model_connection_example/data_output/{session_id}/graph.csv
     """
-    csv_file_path = Path(f'/app/model_connection_example/data_output/{session_id}/graph.csv')
+    csv_file_path = Path(f'/app/model_connection_example/data_output/{session_id}/graph_{session_id}.csv')
 
     if csv_file_path.is_file():
-        return FileResponse(csv_file_path, media_type='text/csv', filename='graph.csv')
+        return FileResponse(csv_file_path, media_type='text/csv', filename=f'graph_{session_id}.csv')
     return HTMLResponse(content='<h1>CSV File Not Found</h1>', status_code=404)

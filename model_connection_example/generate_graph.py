@@ -132,7 +132,7 @@ def main(session_id: str):
         print(f"\n=== Processing model: {model} ===")
 
         # Each model gets its own subfolder in output_directory
-        model_output_dir = output_directory / model
+        model_output_dir = output_directory
         model_output_dir.mkdir(parents=True, exist_ok=True)
 
         # If there's no data, skip
